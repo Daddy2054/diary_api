@@ -34,3 +34,15 @@ func TestLogin(t *testing.T) {
 
         assert.Equal(t, true, exists)
 }
+func TestIncompleteLoginRequest(t *testing.T) {
+        request := map[string]string{"username": "demo"}
+        writer := makeRequest("POST", "/auth/login", request, true)
+        assert.Equal(t, http.StatusBadRequest, writer.Code)
+
+        var response map[string]string
+        json.Unmarshal(writer.Body.Bytes(), &response)
+        message, exists := response["error"]
+
+        assert.Equal(t, true, exists)
+        assert.Equal(t, message, "Password not provided")
+}
